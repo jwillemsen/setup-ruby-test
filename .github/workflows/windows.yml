@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  rubysetupruby:
     strategy:
       fail-fast: false
       matrix:
@@ -32,6 +32,32 @@ jobs:
         which perl
         perl --version
     - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - name: perl after setup-ruby
+      run: |
+        which perl
+        perl --version
+  actionssetupruby:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2019
+            ruby: '2.6'
+            project_type: vs2019
+          - os: windows-2019
+            ruby: '3.0'
+            project_type: vs2019
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} ruby-${{ matrix.ruby }} ${{ matrix.project_type }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: perl before setup-ruby
+      run: |
+        which perl
+        perl --version
+    - uses: actions/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
     - name: perl after setup-ruby
